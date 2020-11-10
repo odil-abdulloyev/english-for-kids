@@ -11,6 +11,7 @@ export class Game {
     this.timer = new Timer();
     this.emptyCell = new Cell(this.getCellSize(), this.level - 1, this.level - 1, this.level * this.level, null);
     this.cells = [this.emptyCell];
+    this.soundOn = false;
 
     this.firstClick = true;
   }
@@ -26,8 +27,28 @@ export class Game {
     const controls = functions.buildHTMLElement('div', container, null, ['panel']);
     const newGameButton = this.createButton(controls, 'New Game', () => { this.reset(); this.redraw(); });
     const scoresButton = this.createButton(controls, 'Scores', () => { this.getScores() });
+    const soundButton = this.createButton(controls, `&#128263;`, () => {
+      if (this.soundOn) {
+        soundButton.innerHTML = `&#128263;`;
+        this.soundOn = false;
+      } else {
+        soundButton.innerHTML = `&#128266;`;
+        this.soundOn = true;
+      }
+    });
+
     const select = this.createSelect(controls, 3, 8);
     const winnerMsg = functions.buildHTMLElement('div', document.body, null, ['victory']);
+    const moveSound = functions.buildHTMLElement('audio',
+      container,
+      [{ name: 'src', value: '../assets/move.wav' }, { name: 'type', value: 'audio/wav' }, { name: 'id', value: 'move' }],
+      null
+    );
+    const victorySound = functions.buildHTMLElement('audio',
+      container,
+      [{ name: 'src', value: '../assets/victory.wav' }, { name: 'type', value: 'audio/wav' }, { name: 'id', value: 'victory' }],
+      null
+    );
 
     for (let i = 0; i + 1 < this.level * this.level; ++i) {
       const cell = functions.buildHTMLElement('div', field, null, ['cell']);
@@ -64,10 +85,10 @@ export class Game {
     }, 1000);
   }
 
-  createButton(parent, text, callback) {
+  createButton(parent, text, listener) {
     const btn = functions.buildHTMLElement('button', parent, [{ name: 'type', value: 'button' }], ['btn']);
-    btn.textContent = text;
-    btn.addEventListener('click', callback);
+    btn.innerHTML = text;
+    btn.addEventListener('click', listener);
     return btn;
   }
 
@@ -79,11 +100,11 @@ export class Game {
       if (i === this.level) {
         option.setAttribute('selected', '');
       }
-      option.addEventListener('click', () => {
+      option.onclick = () => {
         this.changeLevel(i);
         this.reset();
         this.redraw();
-      });
+      }
     }
 
     return select;
@@ -101,6 +122,9 @@ export class Game {
             if (this.firstClick) {
               this.firstClick = false;
               this.timer.start();
+            }
+            if (this.soundOn) {
+              document.querySelector('#move').play();
             }
           }
 
@@ -129,14 +153,6 @@ export class Game {
 
   }
 
-  playSound() {
-
-  }
-
-  stopSound() {
-
-  }
-
   changeLevel(newLevel) {
     this.level = newLevel;
   }
@@ -150,13 +166,22 @@ export class Game {
     this.emptyCell.left = this.level - 1;
     this.emptyCell.top = this.level - 1;
     this.emptyCell.value = this.level * this.level;
+    this.soundOn = false;
   }
 
   congratulate() {
     document.querySelector('.container').style.opacity = '.5';
     const winnerMsg = document.querySelector('.victory');
-    winnerMsg.innerHTML = `<div>You win!<br>Time: ${this.timer.getTime()}<br>Moves: ${this.movesCount}</div>`;
+    winnerMsg.innerHTML =
+      `<div>
+        <div style="color: rgb(107, 9, 9);">You win!</div>
+        <div><span style="color: rgb(4, 49, 4);">Time:</span> ${this.timer.getTime()}</div>
+        <div><span style="color: rgb(4, 49, 4);">Moves:</span> ${this.movesCount}<span></div>
+      </div>`;
     winnerMsg.classList.add('active');
+    if (this.soundOn) {
+      document.querySelector('#victory').play();
+    }
   }
 
   isFinished() {
