@@ -1,0 +1,98 @@
+*, *::before, *::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: rgb(200, 217, 233);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  width: 320px;
+  margin: 100px auto;
+  padding: 10px;
+  box-shadow: 5px 5px 15px 5px rgb(141, 135, 135);
+  background-color: rgba(73, 48, 2);
+}
+
+.field {
+  position: relative;
+  max-width: 400px;
+  max-height: 400px;
+  border-radius: 10px;
+  background-color: rgb(3, 95, 26);
+  color: rgb(4, 49, 4);
+}
+
+.cell {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgb(26, 26, 27);
+  border-radius: 10%;
+  font-size: 24px;
+  font-weight: 600;
+  background-color: rgb(53, 194, 10);
+  cursor: pointer;
+  transition: all .3s ease-in-out;
+}
+
+.panel {
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 10px;
+  justify-content: space-between;
+  color: bisque;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.btn {
+  width: 90px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  background-color: yellow;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(26, 26, 27);
+  cursor: pointer;
+  box-shadow: 2px 2px 5px black;
+}
+
+.btn:hover {
+  background-color: greenyellow;
+}
+
+.btn:active {
+  transform: translate(1px, 1px);
+}
+
+.victory {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(12, 115, 121, .9);
+  border-radius: 2px 45px;
+  font-size: 20px;
+  color: bisque;
+  font-family: Arial, sans-serif;
+  font-weight: 500;
+  transition: all .3s ease-in-out;
+  text-align: center;
+}
+
+.victory.active {
+  top: calc(50% - 45px);
+}
