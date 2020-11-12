@@ -21,15 +21,15 @@ export class Game {
   createLayout() {
     const container = functions.buildHTMLElement('div', document.body, null, ['container']);
     const info = functions.buildHTMLElement('div', container, null, ['panel']);
-    this.createInfoPanel(info);
+    functions.createInfoPanel(info, this);
     const field = functions.buildHTMLElement('div', container, null, ['field']);
     field.style.width = `${this.fieldSize}px`;
     field.style.height = `${this.fieldSize}px`;
 
     const controls = functions.buildHTMLElement('div', container, null, ['panel']);
-    const newGameButton = this.createButton(controls, 'New Game', () => { this.reset(); this.redraw(); });
-    const scoresButton = this.createButton(controls, 'Scores', () => { this.getScores() });
-    const soundButton = this.createButton(controls, `&#128263;`, () => {
+    const newGameButton = functions.createButton(controls, 'New Game', () => { this.reset(); this.redraw(); });
+    const scoresButton = functions.createButton(controls, 'Scores', () => { this.getScores() });
+    const soundButton = functions.createButton(controls, `&#128263;`, () => {
       if (this.soundOn) {
         soundButton.innerHTML = `&#128263;`;
         this.soundOn = false;
@@ -39,7 +39,12 @@ export class Game {
       }
     });
 
-    const select = this.createSelect(controls, 3, 8);
+    const select = functions.createSelect(controls, 3, 8, () => {
+      // this.changeLevel(select.option.value);
+      
+      this.reset();
+      this.redraw();
+    });
     const winnerMsg = functions.buildHTMLElement('div', document.body, null, ['victory']);
     winnerMsg.addEventListener('click', () => {
       winnerMsg.classList.remove('active');
@@ -60,10 +65,8 @@ export class Game {
 
     for (let i = 0; i + 1 < this.level * this.level; ++i) {
       const cell = functions.buildHTMLElement('div', field, null, ['cell']);
-      functions.addStyles(cell, [
-        { name: 'width', value: `${this.getCellSize()}px` },
-        { name: 'height', value: `${this.getCellSize()}px` },
-      ]);
+      cell.style.width = `${this.getCellSize()}px`;
+      cell.style.height = `${this.getCellSize()}px`;
       const value = this.randomized[i] + 1;
       cell.textContent = value;
 
@@ -76,7 +79,7 @@ export class Game {
       cell.style.top = `${top * this.getCellSize()}px`;
     }
 
-    this.createModal(this.stats.get());
+    functions.createModal(this.stats.get());
     const overlay = functions.buildHTMLElement('div', document.body, [{ name: 'id', value: 'overlay' }], null);
     overlay.addEventListener('click', () => {
       overlay.classList.remove('active');
@@ -87,99 +90,8 @@ export class Game {
   redraw() {
     document.querySelector('.container').remove();
     document.querySelector('.victory').remove();
+    document.querySelector('#overlay').remove();
     this.init();
-  }
-
-  createInfoPanel(parent) {
-    const time = functions.buildHTMLElement('div', parent, null, ['time']);
-    const moves = functions.buildHTMLElement('div', parent, null, ['moves']);
-    time.textContent = `Time: ${this.timer.getTime()}`;
-    moves.textContent = `Moves: ${this.movesCount}`;
-    setInterval(() => {
-      time.textContent = `Time: ${this.timer.getTime()}`;
-    }, 1000);
-  }
-
-  createButton(parent, text, listener) {
-    const btn = functions.buildHTMLElement('button', parent, [{ name: 'type', value: 'button' }], ['btn']);
-    btn.innerHTML = text;
-    btn.addEventListener('click', listener);
-    return btn;
-  }
-
-  createSelect(parent, firstOption, lastOption) {
-    const select = functions.buildHTMLElement('select', parent, [{ name: 'name', value: 'level' }], null);
-    for (let i = firstOption; i <= lastOption; ++i) {
-      const option = functions.buildHTMLElement('option', select, [{ name: 'value', value: `${i}` }], null);
-      option.textContent = `${i}x${i}`;
-      if (i === this.level) {
-        option.setAttribute('selected', '');
-      }
-      option.onclick = () => {
-        this.changeLevel(i);
-        this.reset();
-        this.redraw();
-      }
-    }
-
-    return select;
-  }
-
-  updateModal(stats) {
-    const table = document.querySelector('.scores-table');
-    table.innerHTML =
-      `<thead>
-        <tr>
-          <th>#</th>
-          <th>Time</th>
-          <th>Moves</th>
-          <th>Level</th>
-          <th>Score</th>
-        </tr>
-      </thead>`;
-    const tb = document.createElement('tbody');
-    table.append(tb);
-
-    let i = 0;
-    for (const obj of stats) {
-      ++i;
-      const row = document.createElement('tr');
-      const td0 = document.createElement('td');
-      td0.textContent = `${i}`;
-      const td1 = document.createElement('td');
-      td1.textContent = `${obj.time}`;
-      const td2 = document.createElement('td');
-      td2.textContent = `${obj.moves}`;
-      const td3 = document.createElement('td');
-      td3.textContent = `${obj.level}`;
-      const td4 = document.createElement('td');
-      td4.textContent = `${obj.rating}`;
-      row.append(td0, td1, td2, td3, td4);
-      tb.append(row);
-    }
-  }
-
-  createModal(stats) {
-    const modal = functions.buildHTMLElement('div', document.body, null, ['modal']);
-
-    const exit = functions.buildHTMLElement('div', modal, null, ['exit']);
-    exit.innerHTML = `&times;`;
-    exit.onclick = () => {
-      if (modal.classList.contains('active')) {
-        modal.classList.remove('active');
-      }
-      if (document.querySelector('#overlay').classList.contains('active')) {
-        document.querySelector('#overlay').classList.remove('active');
-      }
-    }
-
-    const header = functions.buildHTMLElement('div', modal, null, ['header']);
-    header.textContent = 'Best scores';
-
-    const table = functions.buildHTMLElement('table', modal, null, ['scores-table']);
-
-    this.updateModal(stats);
-    return modal;
   }
 
   init() {
@@ -262,7 +174,7 @@ export class Game {
         this.level
       )
     );
-    this.updateModal(this.stats.get());
+    functions.updateModal(this.stats.get());
   }
 
   isFinished() {
