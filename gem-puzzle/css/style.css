@@ -98,8 +98,93 @@ body {
   font-weight: 500;
   transition: all .3s ease-in-out;
   text-align: center;
+  z-index: 55;
 }
 
 .victory.active {
   top: calc(50% - 45px);
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, .5);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+#overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 300px;
+  height: 345px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid black;
+  border-radius: 10px;
+  overflow: auto;
+  font-size: 16px;
+  font-weight: 500;
+  z-index: 100;
+  transition: all .3s ease-in-out;
+}
+
+.modal.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgb(63, 2, 121);
+}
+
+.scores-table {
+  position: relative;
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.score-table tr, td, th {
+  text-align: center;
+  border: 1px solid grey;
+  padding: 3px;
+}
+
+.exit {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: crimson;
+  font-weight: 600;
+  color: white;
+  border-radius: 10px;
+  z-index: 150;
+  cursor: pointer;
+}
+
+.exit:hover {
+  font-size: 20px;
+}
+
+.exit:active {
+  background-color: rgb(126, 9, 32);
 }

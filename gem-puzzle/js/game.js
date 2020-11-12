@@ -1,6 +1,7 @@
 import { Timer } from './timer.js';
 import * as functions from './functions.js';
-import { Cell } from "./cell.js";
+import { Cell } from './cell.js';
+import { Stats, Score } from './stats.js'
 
 export class Game {
   constructor(fieldSize) {
@@ -12,6 +13,7 @@ export class Game {
     this.emptyCell = new Cell(this.getCellSize(), this.level - 1, this.level - 1, this.level * this.level, null);
     this.cells = [this.emptyCell];
     this.soundOn = false;
+    this.stats = new Stats();
 
     this.firstClick = true;
   }
@@ -39,6 +41,12 @@ export class Game {
 
     const select = this.createSelect(controls, 3, 8);
     const winnerMsg = functions.buildHTMLElement('div', document.body, null, ['victory']);
+    winnerMsg.addEventListener('click', () => {
+      winnerMsg.classList.remove('active');
+      document.querySelector('#overlay').classList.remove('active');
+      this.reset();
+      this.redraw();
+    });
     const moveSound = functions.buildHTMLElement('audio',
       container,
       [{ name: 'src', value: '../assets/move.wav' }, { name: 'type', value: 'audio/wav' }, { name: 'id', value: 'move' }],
@@ -67,6 +75,13 @@ export class Game {
       cell.style.left = `${left * this.getCellSize()}px`;
       cell.style.top = `${top * this.getCellSize()}px`;
     }
+
+    this.createModal(this.stats.get());
+    const overlay = functions.buildHTMLElement('div', document.body, [{ name: 'id', value: 'overlay' }], null);
+    overlay.addEventListener('click', () => {
+      overlay.classList.remove('active');
+      document.querySelector('.modal').classList.remove('active');
+    });
   }
 
   redraw() {
@@ -110,6 +125,63 @@ export class Game {
     return select;
   }
 
+  updateModal(stats) {
+    const table = document.querySelector('.scores-table');
+    table.innerHTML =
+      `<thead>
+        <tr>
+          <th>#</th>
+          <th>Time</th>
+          <th>Moves</th>
+          <th>Level</th>
+          <th>Score</th>
+        </tr>
+      </thead>`;
+    const tb = document.createElement('tbody');
+    table.append(tb);
+
+    let i = 0;
+    for (const obj of stats) {
+      ++i;
+      const row = document.createElement('tr');
+      const td0 = document.createElement('td');
+      td0.textContent = `${i}`;
+      const td1 = document.createElement('td');
+      td1.textContent = `${obj.time}`;
+      const td2 = document.createElement('td');
+      td2.textContent = `${obj.moves}`;
+      const td3 = document.createElement('td');
+      td3.textContent = `${obj.level}`;
+      const td4 = document.createElement('td');
+      td4.textContent = `${obj.rating}`;
+      row.append(td0, td1, td2, td3, td4);
+      tb.append(row);
+    }
+  }
+
+  createModal(stats) {
+    const modal = functions.buildHTMLElement('div', document.body, null, ['modal']);
+
+    const exit = functions.buildHTMLElement('div', modal, null, ['exit']);
+    exit.innerHTML = `&times;`;
+    exit.onclick = () => {
+      if (modal.classList.contains('active')) {
+        modal.classList.remove('active');
+      }
+      if (document.querySelector('#overlay').classList.contains('active')) {
+        document.querySelector('#overlay').classList.remove('active');
+      }
+    }
+
+    const header = functions.buildHTMLElement('div', modal, null, ['header']);
+    header.textContent = 'Best scores';
+
+    const table = functions.buildHTMLElement('table', modal, null, ['scores-table']);
+
+    this.updateModal(stats);
+    return modal;
+  }
+
   init() {
     this.createLayout();
     const self = this;
@@ -150,7 +222,8 @@ export class Game {
   }
 
   getScores() {
-
+    document.querySelector('#overlay').classList.add('active');
+    document.querySelector('.modal').classList.add('active');
   }
 
   changeLevel(newLevel) {
@@ -170,7 +243,7 @@ export class Game {
   }
 
   congratulate() {
-    document.querySelector('.container').style.opacity = '.5';
+    document.querySelector('#overlay').classList.add('active');
     const winnerMsg = document.querySelector('.victory');
     winnerMsg.innerHTML =
       `<div>
@@ -182,6 +255,14 @@ export class Game {
     if (this.soundOn) {
       document.querySelector('#victory').play();
     }
+    this.stats.add(
+      new Score(
+        this.timer.hours * 3600 + this.timer.minutes * 60 + this.timer.seconds,
+        this.movesCount,
+        this.level
+      )
+    );
+    this.updateModal(this.stats.get());
   }
 
   isFinished() {
