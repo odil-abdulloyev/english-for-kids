@@ -37,16 +37,16 @@ export function createButton(parent, text, listener) {
   return btn;
 }
 
-export function createSelect(parent, firstOption, lastOption, listener) {
+export function createSelect(parent, firstOption, lastOption, level, listener) {
   const select = buildHTMLElement('select', parent, [{ name: 'name', value: 'level' }], null);
   for (let i = firstOption; i <= lastOption; ++i) {
     const option = buildHTMLElement('option', select, [{ name: 'value', value: `${i}` }], null);
     option.textContent = `${i}x${i}`;
-    if (i === this.level) {
+    if (i === level) {
       option.setAttribute('selected', '');
     }
-    option.onclick = listener;
   }
+  select.addEventListener('change', listener);
 
   return select;
 }

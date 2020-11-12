@@ -39,9 +39,8 @@ export class Game {
       }
     });
 
-    const select = functions.createSelect(controls, 3, 8, () => {
-      // this.changeLevel(select.option.value);
-      
+    const select = functions.createSelect(controls, 3, 8, this.level, (e) => {
+      this.changeLevel(Number(e.target.value));
       this.reset();
       this.redraw();
     });
