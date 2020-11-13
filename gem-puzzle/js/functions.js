@@ -30,14 +30,14 @@ export function isSolvable(arr) {
   return sum(arr) % 2 === 0;
 }
 
-export function createButton(parent, text, listener) {
+export function createButton(parent, text, callback) {
   const btn = buildHTMLElement('button', parent, [{ name: 'type', value: 'button' }], ['btn']);
   btn.innerHTML = text;
-  btn.addEventListener('click', listener);
+  btn.addEventListener('click', callback);
   return btn;
 }
 
-export function createSelect(parent, firstOption, lastOption, level, listener) {
+export function createSelect(parent, firstOption, lastOption, level, callback) {
   const select = buildHTMLElement('select', parent, [{ name: 'name', value: 'level' }], null);
   for (let i = firstOption; i <= lastOption; ++i) {
     const option = buildHTMLElement('option', select, [{ name: 'value', value: `${i}` }], null);
@@ -46,7 +46,7 @@ export function createSelect(parent, firstOption, lastOption, level, listener) {
       option.setAttribute('selected', '');
     }
   }
-  select.addEventListener('change', listener);
+  select.addEventListener('change', callback);
 
   return select;
 }

@@ -18,10 +18,12 @@ export class Cell {
     this.element.style.left = `${empty.left * this.size}px`;
     this.element.style.top = `${empty.top * this.size}px`;
 
+    
     const emptyLeft = empty.left;
     const emptyTop = empty.top;
     empty.left = this.left;
     empty.top = this.top;
+
     this.left = emptyLeft;
     this.top = emptyTop;
     

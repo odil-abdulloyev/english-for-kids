@@ -27,7 +27,7 @@ export class Game {
     field.style.height = `${this.fieldSize}px`;
 
     const controls = functions.buildHTMLElement('div', container, null, ['panel']);
-    const newGameButton = functions.createButton(controls, 'New Game', () => { this.reset(); this.redraw(); });
+    const newGameButton = functions.createButton(controls, 'New Game', () => { this.reset(); this.redraw() });
     const scoresButton = functions.createButton(controls, 'Scores', () => { this.getScores() });
     const soundButton = functions.createButton(controls, `&#128263;`, () => {
       if (this.soundOn) {
@@ -38,6 +38,7 @@ export class Game {
         this.soundOn = true;
       }
     });
+    const solveButton = functions.createButton(controls, 'Solve', () => { });
 
     const select = functions.createSelect(controls, 3, 8, this.level, (e) => {
       this.changeLevel(Number(e.target.value));

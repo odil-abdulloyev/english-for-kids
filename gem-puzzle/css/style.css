@@ -179,10 +179,11 @@ body {
   border-radius: 10px;
   z-index: 150;
   cursor: pointer;
+  transition: all .1s ease-in-out;
 }
 
 .exit:hover {
-  font-size: 20px;
+  font-size: 24px;
 }
 
 .exit:active {
