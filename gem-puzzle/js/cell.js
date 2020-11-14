@@ -1,32 +1,30 @@
 export class Cell {
-  constructor(size, top, left, value, element) {
-    this.size = size;
-    this.top = top;
+  constructor(left, top, size, value, element) {
     this.left = left;
+    this.top = top;
     this.value = value;
     this.element = element;
+    this.size = size;
+    this.isEmpty = false;
   }
 
-  move(empty) {
-    const leftDiff = Math.abs(empty.left - this.left);
-    const topDiff = Math.abs(empty.top - this.top);
-
-    if (leftDiff + topDiff > 1) {
+  swap(other) {
+    const diffX = Math.abs(this.left - other.left);
+    const diffY = Math.abs(this.top - other.top);
+    if (diffX + diffY > 1) {
       return false;
+    } else {
+      const x = this.left;
+      const y = this.top;
+      this.left = other.left;
+      this.top = other.top;
+      this.element.style.left = `${this.left * this.size}px`;
+      this.element.style.top = `${this.top * this.size}px`;
+      other.left = x;
+      other.top = y;
+      other.element.style.left = `${other.left * other.size}px`;
+      other.element.style.top = `${other.top * other.size}px`;
+      return true;
     }
-
-    this.element.style.left = `${empty.left * this.size}px`;
-    this.element.style.top = `${empty.top * this.size}px`;
-
-    
-    const emptyLeft = empty.left;
-    const emptyTop = empty.top;
-    empty.left = this.left;
-    empty.top = this.top;
-
-    this.left = emptyLeft;
-    this.top = emptyTop;
-    
-    return true;
   }
 }

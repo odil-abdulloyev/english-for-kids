@@ -1,9 +1,5 @@
-export function buildHTMLElement(tagName, parent, attributes, classes) {
+export function buildHTMLElement(tagName, parent = null, attributes = null) {
   const element = document.createElement(tagName);
-
-  if (classes) {
-    element.classList.add(...classes);
-  }
 
   if (attributes) {
     for (const { name, value } of attributes) {
@@ -11,36 +7,22 @@ export function buildHTMLElement(tagName, parent, attributes, classes) {
     }
   }
   if (parent) {
-    parent.append(element);
+    parent.appendChild(element);
   }
   return element;
 }
 
-function sum(arr) {
-  let result = 2 * Math.sqrt(arr.length + 1);
-  for (let i = 0; i < arr.length; ++i) {
-    for (const x of arr.slice(i)) {
-      if (x < arr[i]) ++result;
-    }
-  }
-  return result;
-}
-
-export function isSolvable(arr) {
-  return sum(arr) % 2 === 0;
-}
-
 export function createButton(parent, text, callback) {
-  const btn = buildHTMLElement('button', parent, [{ name: 'type', value: 'button' }], ['btn']);
+  const btn = buildHTMLElement('button', parent, [{ name: 'type', value: 'button' }, { name: 'class', value: 'btn' }]);
   btn.innerHTML = text;
   btn.addEventListener('click', callback);
   return btn;
 }
 
 export function createSelect(parent, firstOption, lastOption, level, callback) {
-  const select = buildHTMLElement('select', parent, [{ name: 'name', value: 'level' }], null);
+  const select = buildHTMLElement('select', parent, [{ name: 'name', value: 'level' }]);
   for (let i = firstOption; i <= lastOption; ++i) {
-    const option = buildHTMLElement('option', select, [{ name: 'value', value: `${i}` }], null);
+    const option = buildHTMLElement('option', select, [{ name: 'value', value: `${i}` }]);
     option.textContent = `${i}x${i}`;
     if (i === level) {
       option.setAttribute('selected', '');
@@ -52,8 +34,8 @@ export function createSelect(parent, firstOption, lastOption, level, callback) {
 }
 
 export function createInfoPanel(parent, obj) {
-  const time = buildHTMLElement('div', parent, null, ['time']);
-  const moves = buildHTMLElement('div', parent, null, ['moves']);
+  const time = buildHTMLElement('div', parent, [{ name: 'class', value: 'time' }]);
+  const moves = buildHTMLElement('div', parent, [{ name: 'class', value: 'moves' }]);
   time.textContent = `Time: ${obj.timer.getTime()}`;
   moves.textContent = `Moves: ${obj.movesCount}`;
   setInterval(() => {
@@ -74,7 +56,7 @@ export function updateModal(stats) {
         </tr>
       </thead>`;
   const tb = document.createElement('tbody');
-  table.append(tb);
+  table.appendChild(tb);
 
   let i = 0;
   for (const obj of stats) {
@@ -91,14 +73,14 @@ export function updateModal(stats) {
     const td4 = document.createElement('td');
     td4.textContent = `${obj.rating}`;
     row.append(td0, td1, td2, td3, td4);
-    tb.append(row);
+    tb.appendChild(row);
   }
 }
 
 export function createModal(stats) {
-  const modal = buildHTMLElement('div', document.body, null, ['modal']);
+  const modal = buildHTMLElement('div', document.body, [{ name: 'class', value: 'modal' }]);
 
-  const exit = buildHTMLElement('div', modal, null, ['exit']);
+  const exit = buildHTMLElement('div', modal, [{ name: 'class', value: 'exit' }]);
   exit.innerHTML = `&times;`;
   exit.onclick = () => {
     if (modal.classList.contains('active')) {
@@ -109,10 +91,10 @@ export function createModal(stats) {
     }
   }
 
-  const header = buildHTMLElement('div', modal, null, ['header']);
+  const header = buildHTMLElement('div', modal, [{ name: 'class', value: 'header' }]);
   header.textContent = 'Best scores';
 
-  buildHTMLElement('table', modal, null, ['scores-table']);
+  buildHTMLElement('table', modal, [{ name: 'class', value: 'scores-table' }]);
 
   updateModal(stats);
   return modal;
