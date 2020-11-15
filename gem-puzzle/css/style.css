@@ -49,6 +49,16 @@ body {
   transition: all .3s ease-in-out;
 }
 
+.cell.special {
+  color: transparent;
+}
+
+.cell.special.full {
+  border-radius: 0;
+  border: none;
+  opacity: 1;
+}
+
 .cell.empty {
   opacity: 0;
 }
@@ -92,23 +102,29 @@ body {
   left: 50%;
   transform: translateX(-50%);
   width: 280px;
-  height: 90px;
+  height: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: rgba(12, 115, 121, .9);
-  border-radius: 2px 45px;
+  border-radius: 10px;
   font-size: 20px;
   color: bisque;
   font-family: Arial, sans-serif;
   font-weight: 500;
   transition: all .3s ease-in-out;
   text-align: center;
+  cursor: pointer;
   z-index: 55;
 }
 
 .victory.active {
-  top: calc(50% - 45px);
+  top: calc(50% - 60px);
+}
+
+select {
+  width: 90px;
+  border: none;
 }
 
 #overlay {
@@ -194,4 +210,8 @@ body {
 
 .exit:active {
   background-color: rgb(126, 9, 32);
+}
+
+.disabled {
+  pointer-events: none;
 }

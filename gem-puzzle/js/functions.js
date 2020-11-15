@@ -19,7 +19,7 @@ export function createButton(parent, text, callback) {
   return btn;
 }
 
-export function createSelect(parent, firstOption, lastOption, level, callback) {
+export function createLevelSelect(parent, firstOption, lastOption, level, callback) {
   const select = buildHTMLElement('select', parent, [{ name: 'name', value: 'level' }]);
   for (let i = firstOption; i <= lastOption; ++i) {
     const option = buildHTMLElement('option', select, [{ name: 'value', value: `${i}` }]);
@@ -29,7 +29,19 @@ export function createSelect(parent, firstOption, lastOption, level, callback) {
     }
   }
   select.addEventListener('change', callback);
+  return select;
+}
 
+export function createTypeSelect(parent, options, selectedIdx, callback) {
+  const select = buildHTMLElement('select', parent, [{ name: 'name', value: 'type' }]);
+  for (let i = 0; i < options.length; ++i) {
+    const option = buildHTMLElement('option', select, [{ name: 'value', value: `${options[i]}` }]);
+    option.textContent = options[i];
+    if (i === selectedIdx) {
+      option.setAttribute('selected', 'selected');
+    }
+  }
+  select.addEventListener('change', callback);
   return select;
 }
 
@@ -98,4 +110,8 @@ export function createModal(stats) {
 
   updateModal(stats);
   return modal;
+}
+
+export function getRandomImage(prefix, count) {
+  return `${prefix}/${Math.floor(Math.random() * count) + 1}.jpg`;
 }

@@ -14,6 +14,7 @@ export class Game {
     this.firstClick = true;
     this.moves = [];
     this.cellSize = 75;
+    this.hasBackgroundImage = false;
   }
 
   init() {
@@ -47,13 +48,26 @@ export class Game {
         this.soundOn = true;
       }
     });
-    const solveButton = functions.createButton(controls, 'Solve', () => { this.solve(); this.reset() });
 
-    const select = functions.createSelect(controls, 3, 8, this.level, (e) => {
+    const idx = this.hasBackgroundImage ? 1 : 0;
+    const typeSelector = functions.createTypeSelect(controls, ['Numbers', 'Images'], idx, (e) => {
+      this.hasBackgroundImage = e.target.value === 'Images';
+      this.reset();
+      this.redraw();
+    });
+
+    const solveButton = functions.createButton(controls, 'Solve', () => {
+      this.solve();
+      this.reset();
+      document.body.classList.add('disabled');
+    });
+
+    const levelSelector = functions.createLevelSelect(controls, 3, 8, this.level, (e) => {
       this.setLevel(Number(e.target.value));
       this.reset();
       this.redraw();
     });
+
     const winnerMsg = functions.buildHTMLElement('div', document.body, [{ name: 'class', value: 'victory' }]);
     winnerMsg.addEventListener('click', () => {
       winnerMsg.classList.remove('active');
@@ -74,7 +88,6 @@ export class Game {
       [{ name: 'src', value: 'assets/gameover.wav' }, { name: 'type', value: 'audio/wav' }, { name: 'id', value: 'game-over' }]
     );
 
-
     functions.createModal(this.stats.get());
     const overlay = functions.buildHTMLElement('div', document.body, [{ name: 'id', value: 'overlay' }]);
     overlay.addEventListener('click', () => {
@@ -84,6 +97,8 @@ export class Game {
 
     const emptyCell = this.cells.find(cell => cell.isEmpty);
 
+    const imgSrc = functions.getRandomImage('./assets/backgrounds', 150);
+
     for (let i = 0; i < this.level ** 2; ++i) {
       const cellElem = functions.buildHTMLElement('div', field, [{ name: 'class', value: 'cell' }]);
       cellElem.style.width = `${this.cells[0].size}px`;
@@ -91,6 +106,12 @@ export class Game {
       cellElem.textContent = this.cells[i].value;
       cellElem.style.left = `${this.cells[i].left * this.cellSize}px`;
       cellElem.style.top = `${this.cells[i].top * this.cellSize}px`;
+      if (this.hasBackgroundImage) {
+        cellElem.style.backgroundImage = `url(${imgSrc})`;
+        cellElem.style.backgroundPosition = `-${this.cells[i].left * this.cellSize}px -${this.cells[i].top * this.cellSize}px`;
+        cellElem.style.backgroundSize = `${this.cellSize * this.level}px ${this.cellSize * this.level}px`;
+        cellElem.classList.add('special');
+      }
       this.cells[i].element = cellElem;
       if (this.cells[i].isEmpty) {
         this.cells[i].element.classList.add('empty');
@@ -117,15 +138,20 @@ export class Game {
         }
       });
     }
-    this.shuffle(30);
+    this.shuffle();
   }
 
-  shuffle(count) {
+  shuffle() {
+    let count = null;
+    const levels = [3, 4, 5, 6, 7, 8];
+    const counts = [50, 80, 120, 200, 500, 1000];
+    for (let i = 0; i < levels.length; ++i) {
+      if (this.level === levels[i]) {
+        count = counts[i];
+      }
+    }
     let emptyCell = this.cells.find(cell => cell.isEmpty);
-
     for (let i = 0; i < count; ++i) {
-      let emptyLeft = emptyCell.left;
-      let emptyTop = emptyCell.top;
       let leftSide = this.cells.find(cell => cell.left === emptyCell.left - 1 && cell.top === emptyCell.top);
       let rightSide = this.cells.find(cell => cell.left === emptyCell.left + 1 && cell.top === emptyCell.top);
       let topSide = this.cells.find(cell => cell.left === emptyCell.left && cell.top === emptyCell.top - 1);
@@ -201,7 +227,7 @@ export class Game {
         this.level
       )
     );
-    functions.updateModal(this.stats.get());
+    document.body.classList.remove('disabled');
   }
 
   gameOver() {
@@ -209,18 +235,17 @@ export class Game {
     const winnerMsg = document.querySelector('.victory');
     winnerMsg.innerHTML =
       `<div>
-        <div style="color: rgb(107, 9, 9);font-size: 36px;">Game Over!</div>
+        <div style="color: rgb(107, 9, 9);font-size: 36px;">Try again :(</div>
       </div>`;
     winnerMsg.classList.add('active');
     if (this.soundOn) {
       document.querySelector('#game-over').play();
     }
+    document.body.classList.remove('disabled');
   }
 
   isFinished() {
-    return this.cells.every((cell) => {
-      return cell.value === cell.top * this.level + cell.left + 1;
-    });
+    return this.cells.every((cell) => cell.value === cell.top * this.level + cell.left + 1);
   }
 
   redraw() {

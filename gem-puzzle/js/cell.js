@@ -1,11 +1,12 @@
 export class Cell {
-  constructor(left, top, size, value, element) {
+  constructor(left, top, size, value, element, imgSrc = null) {
     this.left = left;
     this.top = top;
     this.value = value;
     this.element = element;
     this.size = size;
     this.isEmpty = false;
+    this.imgSrc = imgSrc;
   }
 
   swap(other) {

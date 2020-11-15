@@ -18,7 +18,15 @@ export class Stats {
   }
 
   get() {
-    this.stats.sort((lhs, rhs) => lhs.rating < rhs.rating);
+    this.stats.sort((lhs, rhs) => {
+      if (lhs.rating > rhs.rating) {
+        return -1;
+      } else if (lhs.rating < rhs.rating) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
     this.stats = this.stats.slice(0, 10);
     return this.stats;
   }
