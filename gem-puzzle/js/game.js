@@ -1,9 +1,10 @@
-import { Timer } from './timer.js';
+import Timer from './timer.js';
 import * as functions from './functions.js';
-import { Cell } from './cell.js';
-import { Stats, Score } from './stats.js'
+import Cell from './cell.js';
+import Stats from './stats.js';
+import Score from './score.js';
 
-export class Game {
+export default class Game {
   constructor(level = 4) {
     this.level = level;
     this.cells = [];
@@ -36,33 +37,36 @@ export class Game {
 
     const controls = functions.buildHTMLElement('div', container, [{ name: 'class', value: 'panel' }]);
 
-    const newGameButton = functions.createButton(controls, 'New Game', () => { this.reset(); this.redraw() });
-    const scoresButton = functions.createButton(controls, 'Scores', () => { this.getScores() });
-    const soundIcon = this.soundOn ? `&#128266;` : `&#128263;`;
+    functions.createButton(controls, 'New Game', () => {
+      this.reset();
+      this.redraw();
+    });
+    functions.createButton(controls, 'Scores', () => { functions.showModal(); });
+    const soundIcon = this.soundOn ? '&#128266;' : '&#128263;';
     const soundButton = functions.createButton(controls, soundIcon, () => {
       if (this.soundOn) {
-        soundButton.innerHTML = `&#128263;`;
+        soundButton.innerHTML = '&#128263;';
         this.soundOn = false;
       } else {
-        soundButton.innerHTML = `&#128266;`;
+        soundButton.innerHTML = '&#128266;';
         this.soundOn = true;
       }
     });
 
     const idx = this.hasBackgroundImage ? 1 : 0;
-    const typeSelector = functions.createTypeSelect(controls, ['Numbers', 'Images'], idx, (e) => {
+    functions.createTypeSelect(controls, ['Numbers', 'Images'], idx, (e) => {
       this.hasBackgroundImage = e.target.value === 'Images';
       this.reset();
       this.redraw();
     });
 
-    const solveButton = functions.createButton(controls, 'Solve', () => {
+    functions.createButton(controls, 'Solve', () => {
       this.solve();
       this.reset();
       document.body.classList.add('disabled');
     });
 
-    const levelSelector = functions.createLevelSelect(controls, 3, 8, this.level, (e) => {
+    functions.createLevelSelect(controls, 3, 8, this.level, (e) => {
       this.setLevel(Number(e.target.value));
       this.reset();
       this.redraw();
@@ -75,15 +79,15 @@ export class Game {
       this.reset();
       this.redraw();
     });
-    const moveSound = functions.buildHTMLElement('audio',
+    functions.buildHTMLElement('audio',
       container,
       [{ name: 'src', value: 'assets/move.wav' }, { name: 'type', value: 'audio/wav' }, { name: 'id', value: 'move' }]
     );
-    const victorySound = functions.buildHTMLElement('audio',
+    functions.buildHTMLElement('audio',
       container,
       [{ name: 'src', value: 'assets/victory.wav' }, { name: 'type', value: 'audio/wav' }, { name: 'id', value: 'victory' }]
     );
-    const gameOverSound = functions.buildHTMLElement('audio',
+    functions.buildHTMLElement('audio',
       container,
       [{ name: 'src', value: 'assets/gameover.wav' }, { name: 'type', value: 'audio/wav' }, { name: 'id', value: 'game-over' }]
     );
@@ -150,20 +154,28 @@ export class Game {
         count = counts[i];
       }
     }
-    let emptyCell = this.cells.find(cell => cell.isEmpty);
+    const emptyCell = this.cells.find(cell => cell.isEmpty);
     for (let i = 0; i < count; ++i) {
-      let leftSide = this.cells.find(cell => cell.left === emptyCell.left - 1 && cell.top === emptyCell.top);
-      let rightSide = this.cells.find(cell => cell.left === emptyCell.left + 1 && cell.top === emptyCell.top);
-      let topSide = this.cells.find(cell => cell.left === emptyCell.left && cell.top === emptyCell.top - 1);
-      let bottomSide = this.cells.find(cell => cell.left === emptyCell.left && cell.top === emptyCell.top + 1);
-      let arr = [];
-      for (let x of [leftSide, rightSide, topSide, bottomSide]) {
+      const leftSide = this.cells.find(cell =>
+        cell.left === emptyCell.left - 1 && cell.top === emptyCell.top
+      );
+      const rightSide = this.cells.find(cell =>
+        cell.left === emptyCell.left + 1 && cell.top === emptyCell.top
+      );
+      const topSide = this.cells.find(cell =>
+        cell.left === emptyCell.left && cell.top === emptyCell.top - 1
+      );
+      const bottomSide = this.cells.find(cell =>
+        cell.left === emptyCell.left && cell.top === emptyCell.top + 1
+      );
+      const arr = [];
+      for (const x of [leftSide, rightSide, topSide, bottomSide]) {
         if (x !== undefined) {
           arr.push(x);
         }
       }
 
-      let randomCell = arr[Math.floor(Math.random() * arr.length)];
+      const randomCell = arr[Math.floor(Math.random() * arr.length)];
       if (emptyCell.swap(randomCell)) {
         this.moves.push(randomCell);
       }
@@ -171,22 +183,17 @@ export class Game {
   }
 
   solve() {
-    let emptyCell = this.cells.find(cell => cell.isEmpty);
-    const length = this.moves.length;
+    const emptyCell = this.cells.find(cell => cell.isEmpty);
+    const len = this.moves.length;
     this.moves.reverse().forEach((cell, i) => setTimeout(() => {
       cell.swap(emptyCell);
       if (this.soundOn) {
         document.querySelector('#move').play();
       }
-      if (i === length - 1) {
+      if (i === len - 1) {
         this.gameOver();
       }
     }, i * 200));
-  }
-
-  getScores() {
-    document.querySelector('#overlay').classList.add('active');
-    document.querySelector('.modal').classList.add('active');
   }
 
   setLevel(newLevel) {

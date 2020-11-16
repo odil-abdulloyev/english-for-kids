@@ -93,7 +93,7 @@ export function createModal(stats) {
   const modal = buildHTMLElement('div', document.body, [{ name: 'class', value: 'modal' }]);
 
   const exit = buildHTMLElement('div', modal, [{ name: 'class', value: 'exit' }]);
-  exit.innerHTML = `&times;`;
+  exit.innerHTML = '&times;';
   exit.onclick = () => {
     if (modal.classList.contains('active')) {
       modal.classList.remove('active');
@@ -101,7 +101,7 @@ export function createModal(stats) {
     if (document.querySelector('#overlay').classList.contains('active')) {
       document.querySelector('#overlay').classList.remove('active');
     }
-  }
+  };
 
   const header = buildHTMLElement('div', modal, [{ name: 'class', value: 'header' }]);
   header.textContent = 'Best scores';
@@ -110,6 +110,11 @@ export function createModal(stats) {
 
   updateModal(stats);
   return modal;
+}
+
+export function showModal() {
+  document.querySelector('#overlay').classList.add('active');
+  document.querySelector('.modal').classList.add('active');
 }
 
 export function getRandomImage(prefix, count) {
