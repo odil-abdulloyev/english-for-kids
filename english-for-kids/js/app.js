@@ -9,9 +9,11 @@ import Overlay from './overlay.js';
 
 export default class App {
   constructor() {
+    this.playModeOn = false;
+    this.category = 'Main page';
     this.resourceManager = new ResourceManager(cards);
     this.cards = [];
-    this.renderCards('Main page', true, false);
+    this.renderCards(this.category, true, false);
 
     this.burger = new Burger(document.querySelector('.header-container'));
     this.switcher = new Switcher(document.querySelector('.header-container'), 20, 'Train', 'Play');
@@ -52,7 +54,6 @@ export default class App {
   handleBurgerClick = () => {
     this.burger.element.querySelectorAll('.burger-item').forEach(item => item.classList.toggle('active'));
     this.menu.element.classList.toggle('active');
-
     this.overlay.element.classList.toggle('active');
     document.body.classList.toggle('scroll-disabled');
   }
@@ -60,6 +61,7 @@ export default class App {
   handleSwitcherClick = () => {
     this.switcher.element.classList.toggle('active');
     this.switcher.roll.classList.toggle('active');
+    this.switchMode();
   }
 
   handleCardClick = (card) => {
@@ -67,6 +69,7 @@ export default class App {
       this.navigate(card.word);
       this.renderCards(card.word, false, true);
       this.menu.setActive(card.word);
+      this.category = card.word;
     } else {
       card.audio.play();
     }
@@ -76,6 +79,7 @@ export default class App {
     const text = item.textContent;
     if (text === 'Main page') {
       this.renderCards(text, true, false);
+      this.category = text;
     } else {
       this.renderCards(text, false, true);
     }
@@ -103,5 +107,15 @@ export default class App {
       card.element.addEventListener('click', () => this.handleCardClick(card));
       this.cards.push(card);
     });
+  }
+
+  switchMode() {
+    if (this.playModeOn) {
+      this.playModeOn = false;
+      document.querySelector('.button').classList.remove('visible');
+    } else {
+      this.playModeOn = true;
+      document.querySelector('.button').classList.add('visible');
+    }
   }
 }
