@@ -1,0 +1,4 @@
+@mixin burger-item-active($color, $x, $y, $angle: 0) {
+  background-color: $color;
+  transform: rotate($angle) translate($x, $y);
+}
