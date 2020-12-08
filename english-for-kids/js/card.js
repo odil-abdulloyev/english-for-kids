@@ -16,8 +16,8 @@ export default class Card {
     card.addEventListener('mouseleave', this.handleMouseLeave);
     parent.appendChild(card);
     this.element = card;
-    this.audio = data.audioSrc ? new Audio(`./assets/${data.audioSrc}`) : null;
-    this.img = data.image ? new Image(`./assets/${data.image}`) : null;
+    this.audio = data.audioSrc ? new Audio(`../assets/${data.audioSrc}`) : null;
+    this.img = data.image ? new Image(`../assets/${data.image}`) : null;
     this.word = data.word;
     this.translation = data.translation;
     this.isMainPageCard = isMainPageCard;
