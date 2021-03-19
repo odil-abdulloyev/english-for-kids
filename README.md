@@ -1,2 +1,3 @@
-# odil-abdulloyev-JS2020Q3
-Private repository for @odil-abdulloyev
+# English For Kids
+
+Deploy: [https://odil-abdulloyev.github.io/english-for-kids/](https://odil-abdulloyev.github.io/english-for-kids/)
