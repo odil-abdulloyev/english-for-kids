@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
-  "homepage": "https://odil-abdulloyev.github.io/english-for-kids/",
+  "homepage": "https://odil-abdulloyev.github.io/english-for-kids/index.html",
   "scripts": {
     "deploy": "gh-pages -d ."
   },
