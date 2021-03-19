@@ -1,0 +1,31 @@
+.button {
+  display: none;
+  margin: 40px auto;
+  height: 40px;
+  box-shadow: 0 0 10px 5px $shadow-color;
+  border: none;
+  border-radius: 5px;
+  width: 150px;
+  background-color: $title-color;
+  transition: all 0.2s ease-in-out;
+  color: #fff;
+
+  &:hover {
+    box-shadow: 0 0 10px 10px $shadow-color;
+  }
+
+  &:active {
+    opacity: 0.9;
+    transform: translate(1px, 1px);
+  }
+}
+
+.button.visible {
+  display: block;
+}
+
+.button.repeat {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
